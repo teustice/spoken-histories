@@ -4,22 +4,45 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Api from '../../lib/api';
+import Tts from 'react-native-tts';
+
 
 import ActionCreators from '../../actions/index';
 import getUserLocation from '../../selectors/userLocation';
 import getUserCity from '../../selectors/userCity';
 
 export class Main extends Component {
-  componentDidMount() {
-    // navigator.geolocation.getCurrentPosition(
-    //   (position) => {
-    //     this.props.setUserLocation({
-    //       latitude: position.coords.latitude,
-    //       longitude: position.coords.longitude,
-    //     });
-    //   },
-    //   (error) => this.setState({ error: error.message }),
-    // );
+  parseSection(sectionId){
+    console.log(sectionId);
+    let root = 'https://en.wikipedia.org/w/api.php';
+    let params = `?action=parse&format=json&page=${this.props.userCity}&section=${sectionId}`
+    Api.get(root + params).then((val) => {
+      let regex = /(<([^>]+)>)/ig
+      let text = val.parse.text['*'];
+      let result = text.replace(regex, "");
+      Tts.setDefaultVoice('com.apple.ttsbundle.Tessa-compact');
+      Tts.setDefaultPitch(0.6);
+      Tts.speak(result);
+    });
+  }
+
+  findSection(){
+    let root = 'https://en.wikipedia.org/w/api.php';
+    let params = `?action=parse&prop=sections&format=json&page=${this.props.userCity}`
+    Api.get(root + params).then((val) => {
+      let sections = val.parse.sections
+      for(let i=0; i<sections.length; i++){
+        if(sections[i].line == "History"){
+          this.parseSection(sections[i].index);
+        }
+      }
+    });
+
+  //   var regex = /(<([^>]+)>)/ig
+  // ,   body = "<p>test</p>"
+  // ,   result = body.replace(regex, "");
+  //
+  // console.log(result);
   }
 
   formatCity(obj){
@@ -52,6 +75,7 @@ export class Main extends Component {
         Api.get(root + params).then((val) => {
           city = this.formatCity(val.results);
           this.props.setUserCity(city);
+          this.findSection();
         });
       },
       (error) => console.log(error.message),
