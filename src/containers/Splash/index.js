@@ -23,12 +23,6 @@ export class Splash extends Component {
               this.props.fetchTitle();
             }}
           />
-          <Button
-            text={'Go to map'}
-            onPress={() => {
-              this.props.navigation.navigate('Main');
-            }}
-          />
         </View>
       </View>
     );

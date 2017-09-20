@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 
 import title from './title';
+import userLocation from './userLocation';
+import userCity from './userCity';
 import connectivity from './connectivity';
-import region from './region';
-import markers from './markers';
 
-export const reducers = { title, connectivity, region, markers };
+export const reducers = { title, connectivity, userLocation, userCity};
 
 export default function getRootReducer(navReducer) {
   return combineReducers({

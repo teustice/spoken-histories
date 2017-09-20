@@ -1,19 +1,19 @@
 import setTitle from './set-title';
 import fetchTitle from './fetch-title';
-import setRegion from './set-region';
-import fetchRegion from './fetch-region';
-import setMarkers from './set-markers';
-import fetchMarkers from './fetch-markers';
+import setUserLocation from './set-userLocation';
+import fetchUserLocation from './fetch-userLocation';
+import setUserCity from './set-userCity';
+import fetchUserCity from './fetch-userCity';
 import setConnectivity from './set-connectivity';
 import { genericError } from './errors';
 
 const ActionCreators = {
-  setRegion,
-  fetchRegion,
+  setUserLocation,
+  fetchUserLocation,
+  setUserCity,
+  fetchUserCity,
   setTitle,
   fetchTitle,
-  setMarkers,
-  fetchMarkers,
   setConnectivity,
   genericError,
 };
