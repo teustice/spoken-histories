@@ -23,14 +23,19 @@ export class Main extends Component {
   }
 
   formatCity(obj){
-    console.log(obj);
     let city;
+    let state;
     for(let i=0; i<obj[0].address_components.length; i++){
       if(obj[0].address_components[i].types[0] == "locality"){
         city = obj[0].address_components[i].long_name;
       }
     }
-    return city;
+    for(let i=0; i<obj[0].address_components.length; i++){
+      if(obj[0].address_components[i].types[0] == "administrative_area_level_1"){
+        state = obj[0].address_components[i].long_name;
+      }
+    }
+    return `${city},_${state}`;
   }
 
   findCity(){
