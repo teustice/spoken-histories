@@ -17,16 +17,19 @@ export class Main extends Component {
   }
 
   parseSection(sectionId){
-    console.log(sectionId);
     let root = 'https://en.wikipedia.org/w/api.php';
     let params = `?action=parse&format=json&page=${this.props.userCity}&section=${sectionId}`
     Api.get(root + params).then((val) => {
-      let regex = /(<([^>]+)>)/ig
+      let regex = /(<([^>]+)>)/ig;
       let text = val.parse.text['*'];
       let result = text.replace(regex, "");
+      let noContents = result.substring(result.indexOf("History[edit]") + 7);
+      let finalResult = noContents.replace(/(\[.+\])/g, '');
+      let anotherResult = finalResult.replace(/ *\([^)]*\) */g, "");
+      console.log(anotherResult);
       Tts.setDefaultVoice('com.apple.ttsbundle.Tessa-compact');
-      Tts.setDefaultPitch(0.6);
-      Tts.speak(result);
+      Tts.speak(`You are currently in ${this.props.userCity}`);
+      Tts.speak(anotherResult);
     });
   }
 
@@ -91,7 +94,7 @@ export class Main extends Component {
       <View style={styles.container}>
         <Text>{this.props.userCity}</Text>
         <Button
-          title="Click to see what city your in"
+          title="Learn About Where You Are"
           onPress={() => this.findCity()}
         />
         <Button
