@@ -12,6 +12,10 @@ import getUserLocation from '../../selectors/userLocation';
 import getUserCity from '../../selectors/userCity';
 
 export class Main extends Component {
+  stopTalking(){
+    Tts.stop();
+  }
+
   parseSection(sectionId){
     console.log(sectionId);
     let root = 'https://en.wikipedia.org/w/api.php';
@@ -89,6 +93,10 @@ export class Main extends Component {
         <Button
           title="Click to see what city your in"
           onPress={() => this.findCity()}
+        />
+        <Button
+          title="Shut It"
+          onPress={() => this.stopTalking()}
         />
       </View>
     );
