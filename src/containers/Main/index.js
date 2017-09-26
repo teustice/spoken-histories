@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Button} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import getUserCity from '../../selectors/userCity';
 export class Main extends Component {
   stopTalking(){
     Tts.stop();
+    this.props.setUserCity('');
   }
 
   parseSection(sectionId){
@@ -26,7 +27,6 @@ export class Main extends Component {
       let noContents = result.substring(result.indexOf("History[edit]") + 7);
       let finalResult = noContents.replace(/(\[.+\])/g, '');
       let anotherResult = finalResult.replace(/ *\([^)]*\) */g, "");
-      console.log(anotherResult);
       Tts.setDefaultVoice('com.apple.ttsbundle.Tessa-compact');
       Tts.speak(`You are currently in ${this.props.userCity}`);
       Tts.speak(anotherResult);
@@ -44,12 +44,6 @@ export class Main extends Component {
         }
       }
     });
-
-  //   var regex = /(<([^>]+)>)/ig
-  // ,   body = "<p>test</p>"
-  // ,   result = body.replace(regex, "");
-  //
-  // console.log(result);
   }
 
   formatCity(obj){
@@ -89,18 +83,45 @@ export class Main extends Component {
     )
   }
 
+  cityText(){
+    let cityText = this.props.userCity;
+    let result = cityText.replace(/_/g, " ");
+    return result;
+  }
+
+  buttonToggle(){
+    if(this.props.userCity.length > 2){
+      return(
+        <View style={{width: '100%', height: '100%', justifyContent:'center', alignItems: 'center'}}>
+          <Text style={styles.cityText}>{this.cityText()}</Text>
+          <TouchableHighlight
+            onPress={() => this.stopTalking()}
+            style={styles.button}
+            underlayColor='rgba(255,80,100,0.8)'
+            activeOpacity={0.7}
+          >
+            <Text style={styles.buttonText}>Stop Talking!</Text>
+          </TouchableHighlight>
+        </View>
+      )
+    } else {
+      return(
+        <TouchableHighlight
+          onPress={() => this.findCity()}
+          style={styles.button}
+          underlayColor='rgba(255,80,100,0.8)'
+          activeOpacity={0.7}
+        >
+          <Text style={styles.buttonText}>Tell me the history!</Text>
+        </TouchableHighlight>
+      )
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>{this.props.userCity}</Text>
-        <Button
-          title="Learn About Where You Are"
-          onPress={() => this.findCity()}
-        />
-        <Button
-          title="Shut It"
-          onPress={() => this.stopTalking()}
-        />
+        {this.buttonToggle()}
       </View>
     );
   }
@@ -112,6 +133,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  button: {
+    width: '70%',
+    height: 80,
+    borderRadius: 10,
+    backgroundColor: 'crimson',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
+  },
+  cityText: {
+    fontSize: 25,
+  }
 });
 
 function mapDispatchToProps(dispatch) {
